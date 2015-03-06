@@ -175,6 +175,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201503050302289_InitialCreate.cs" />
+    <Compile Include="Migrations\201503050302289_InitialCreate.Designer.cs">
+      <DependentUpon>201503050302289_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201503061543488_ChangeProp1.cs" />
+    <Compile Include="Migrations\201503061543488_ChangeProp1.Designer.cs">
+      <DependentUpon>201503061543488_ChangeProp1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -192,7 +201,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <None Include="Properties\PublishProfiles\quoteswebproject.pubxml" />
+    <None Include="Properties\PublishProfiles\QuotationProject.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -255,6 +264,14 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201503050302289_InitialCreate.resx">
+      <DependentUpon>201503050302289_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201503061543488_ChangeProp1.resx">
+      <DependentUpon>201503061543488_ChangeProp1.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
