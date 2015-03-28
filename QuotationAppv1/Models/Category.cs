@@ -6,8 +6,9 @@ using System.Text;
 
 namespace QuotationAppv1.Models
 {
-    public class Category
+    public class Category 
     {
+   
       
         public int CategoryID { get; set;  }
 
@@ -17,6 +18,7 @@ namespace QuotationAppv1.Models
 
         
         public virtual List<Quotation> Quotations { get; set; }
+    
     
     }
 }
