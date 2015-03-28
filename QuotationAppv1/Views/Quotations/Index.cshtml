@@ -1,15 +1,40 @@
 ﻿@model IEnumerable<QuotationAppv1.Models.Quotation>
-
+@using GridMvc.Html 
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Quotations Database</h2>
+<h5 class ="jumbotron">Quotations Database</h5>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
+    @Html.ActionLink("Create New", "Create") 
+        @using (Html.BeginForm())
+        {
+
+            <input type="submit" value="Search"  />
+                 @Html.TextBox("SearchString") <br />
+            if (ViewBag.ShowLink == true) { 
+                 @Html.ActionLink("Display All", "Index", "QuotationsController", new { @class = "btn btn-primary" })
+            }
+        }
+  </p>
+
+
+
+@Html.Grid(Model).Columns(cols =>
+        {
+            cols.Add(col => col.Category.Name).Titled("Category").Sortable(true);
+            cols.Add(col => col.Quote).Titled("Quote"); 
+            cols.Add(col => col.Author).Titled("Author").Sortable(true);
+            cols.Add(col => col.Date).Format("{0:MM/dd/yyyy}").Titled("Date Added").Sortable(true);
+            cols.Add().Encoded(false).Sanitized(false).RenderValueAs(a => @Html.ActionLink("Details", "Details", new { id = a.QuotationID }));
+            cols.Add().Encoded(false).Sanitized(false).RenderValueAs(a => @Html.ActionLink("Edit", "Edit", new { id = a.QuotationID }));
+            cols.Add().Encoded(false).Sanitized(false).RenderValueAs(a => @Html.ActionLink("Delete", "Delete", new { id = a.QuotationID }));
+            
+        }).WithPaging(5) 
+
+
+@*<table class="table">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.Category.Name)
@@ -48,4 +73,4 @@
     </tr>
 }
 
-</table>
+</table>*@

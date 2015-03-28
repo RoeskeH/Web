@@ -15,14 +15,14 @@ namespace QuotationAppv1.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "A quotation server programmed in MVC5";
 
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "Don't call us, we'll call you!";
 
             return View();
         }

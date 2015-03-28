@@ -14,33 +14,46 @@ namespace QuotationAppv1.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        //public ActionResult Index(){
+        //    var quotations = db.Quotations.Include(q => q.Category);
+        //    return View(quotations);
+        //}
         // GET: Quotations
-        public ActionResult Index(string sortOrder)
-        {  var authors = from Author in db.Quotations select Author;
-           ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_abc" : "";
-        
-       
-  
-            switch (sortOrder)
-            {
-                case "name_abc" :
-                    authors = authors.OrderBy(a => a.Author); 
-                    break;
-                case "name_desc" :
-                    authors = authors.OrderByDescending(a => a.Author);
-                    break;
-               default:
-                  break; 
-            }
+        public ActionResult Index(string searchString)
+        {
+            
 
+         //var authors = from Author in db.Quotations select Author;
+         // ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_abc" : "";
 
-            return View(authors.ToList());
-        
+         //  switch (sortOrder)
+         //   {
+         //       case "name_abc" :
+         //           authors = authors.OrderBy(a => a.Author); 
+         //           break;
+         //       case "name_desc" :
+         //           authors = authors.OrderByDescending(a => a.Author);
+         //           break;
+         //      default:
+         //         break; 
+         //   }
 
+           
+            //return View(authors.ToList());
 
             //var quotations = db.Quotations.Include(q => q.Category);
-           // return View(quotations.ToList());
-           }
+            var quotations = from a in db.Quotations select a;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                quotations = quotations.Where(a => a.Category.Name.Contains(searchString) || a.Author.Contains(searchString) || a.Quote.Contains(searchString));
+                ViewBag.ShowLink = true;
+            }
+            else ViewBag.ShowLink = false; 
+            return View(quotations.ToList());
+        
+        }
+  
 
         // GET: Quotations/Details/5
         public ActionResult Details(int? id)
@@ -54,10 +67,11 @@ namespace QuotationAppv1.Controllers
             {
                 return HttpNotFound();
             }
-            return View(quotation);
+            return View(quotation); 
         }
 
         // GET: Quotations/Create
+        [Authorize]
         public ActionResult Create()
         {
             ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "Name");
@@ -67,10 +81,28 @@ namespace QuotationAppv1.Controllers
         // POST: Quotations/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "QuotationID,Quote,Author,CategoryID,Date")] Quotation quotation)
-        {
+        public ActionResult Create(string add, [Bind(Include = "QuotationID,Quote,Author,CategoryID,Date")] Quotation quotation)
+        { 
+  
+            var catCheck = from a in db.Quotations select a;
+            if(!String.IsNullOrEmpty(add))
+            {
+                catCheck = catCheck.Where(a => a.Category.Name.Equals(add));
+
+                if (catCheck.Equals(false))
+                {
+                    quotation.Category.Name = add;
+ 
+                }
+                
+            }
+
+
+            quotation.Date = DateTime.Now; 
+
             if (ModelState.IsValid)
             {   
                 db.Quotations.Add(quotation);
@@ -83,6 +115,7 @@ namespace QuotationAppv1.Controllers
         }
 
         // GET: Quotations/Edit/5
+        [Authorize]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -101,6 +134,7 @@ namespace QuotationAppv1.Controllers
         // POST: Quotations/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "QuotationID,Quote,Author,CategoryID,Date")] Quotation quotation)
@@ -116,6 +150,7 @@ namespace QuotationAppv1.Controllers
         }
 
         // GET: Quotations/Delete/5
+        [Authorize]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -131,6 +166,7 @@ namespace QuotationAppv1.Controllers
         }
 
         // POST: Quotations/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

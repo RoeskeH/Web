@@ -13,6 +13,7 @@ namespace QuotationAppv1.Models
         public string Quote { get; set; }
         [Required(ErrorMessage = "Author Required!")]
         public string Author { get; set; }
+        [Required(ErrorMessage = "Category Required!")]
         public int CategoryID { get; set; }
         public virtual Category Category { get; set; }
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy hh:mm tt}")]

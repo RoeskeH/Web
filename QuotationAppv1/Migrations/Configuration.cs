@@ -27,6 +27,7 @@ namespace QuotationAppv1.Migrations
             //      new Person { FullName = "Rowan Miller" }
             //    );
             //
+            
         }
     }
 }

@@ -11,9 +11,12 @@ namespace QuotationAppv1.Models
       
         public int CategoryID { get; set;  }
 
+        
         [Display(Name = "Category")] 
         public string Name { get; set; }
 
+        
         public virtual List<Quotation> Quotations { get; set; }
+    
     }
 }
