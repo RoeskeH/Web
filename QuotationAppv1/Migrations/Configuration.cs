@@ -1,5 +1,6 @@
 namespace QuotationAppv1.Migrations
 {
+    using QuotationAppv1.Models;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
@@ -27,6 +28,16 @@ namespace QuotationAppv1.Migrations
             //      new Person { FullName = "Rowan Miller" }
             //    );
             //
+
+            if (context.Categories.Count() == 0)
+            {
+                context.Categories.Add(new Category { Name = "Computers" });
+                context.Categories.Add(new Category { Name = "History" });
+                context.Categories.Add(new Category { Name = "Humor" });
+                context.Categories.Add(new Category { Name = "Technology" });
+                context.SaveChanges(); 
+
+            }
             
         }
     }

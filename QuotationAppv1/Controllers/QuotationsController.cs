@@ -7,53 +7,60 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using QuotationAppv1.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace QuotationAppv1.Controllers
 {
     public class QuotationsController : Controller
     {
+        private UserManager<ApplicationUser> manager; 
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        //public ActionResult Index(){
-        //    var quotations = db.Quotations.Include(q => q.Category);
-        //    return View(quotations);
-        //}
+        public QuotationsController(){
+            manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+            
+           
+        }
+
+        
+            
+        
         // GET: Quotations
         public ActionResult Index(string searchString)
         {
-            
+               
+               var quotations = from a in db.Quotations select a;
 
-         //var authors = from Author in db.Quotations select Author;
-         // ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_abc" : "";
+               if (!String.IsNullOrEmpty(searchString))
+               {
+                   quotations = quotations.Where(a => a.Category.Name.Contains(searchString) || a.Author.Contains(searchString) || a.Quote.Contains(searchString));
+                   ViewBag.ShowLink = true;
+                  
+               }
+               else
+                   ViewBag.ShowLink = false;
 
-         //  switch (sortOrder)
-         //   {
-         //       case "name_abc" :
-         //           authors = authors.OrderBy(a => a.Author); 
-         //           break;
-         //       case "name_desc" :
-         //           authors = authors.OrderByDescending(a => a.Author);
-         //           break;
-         //      default:
-         //         break; 
-         //   }
+               
+               
+           return View(quotations.ToList());
+           //var userquotes = from b in db.Quotations select b;
+           //var person = User.Identity.GetUserId();
+           //if (!String.IsNullOrEmpty(person))
+           //{
+           //    userquotes = userquotes.Where(b => b.User.Id.Contains(person));
+           //    ViewBag.show = true;
+           //}
+           //else
+           //    ViewBag.show = false;
 
-           
-            //return View(authors.ToList());
-
-            //var quotations = db.Quotations.Include(q => q.Category);
-            var quotations = from a in db.Quotations select a;
-
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                quotations = quotations.Where(a => a.Category.Name.Contains(searchString) || a.Author.Contains(searchString) || a.Quote.Contains(searchString));
-                ViewBag.ShowLink = true;
-            }
-            else ViewBag.ShowLink = false; 
-            return View(quotations.ToList());
-        
+           //return View(userquotes.ToList());
+                   
         }
-  
+
+       
+            
+        
 
         // GET: Quotations/Details/5
         public ActionResult Details(int? id)
@@ -84,33 +91,43 @@ namespace QuotationAppv1.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(string add, [Bind(Include = "QuotationID,Quote,Author,CategoryID,Date")] Quotation quotation)
-        { 
-  
-            var catCheck = from a in db.Quotations select a;
-            if(!String.IsNullOrEmpty(add))
+        public ActionResult Create(string add, [Bind(Include = "QuotationID,Quote,Author,CategoryID,Date,User")] Quotation quotation)
+        {
+            if (!String.IsNullOrEmpty(add))
             {
-                catCheck = catCheck.Where(a => a.Category.Name.Equals(add));
+                var catCheck = from a in db.Categories select a;
+                catCheck = catCheck.Where(a => a.Name.Equals(add));
 
-                if (catCheck.Equals(false))
+
+                if (catCheck.Equals(true))
                 {
-                    quotation.Category.Name = add;
- 
+                    Category c = new Category { Name = add };
+                    db.Categories.Add(c);
+                    db.SaveChanges();
                 }
-                
             }
 
+           //if(!String.IsNullOrEmpty(add))
+           //{
+           //     Category c = new Category { Name = add };
+           //     db.Categories.Add(c);
+           //     db.SaveChanges();
+                
+           //}
 
-            quotation.Date = DateTime.Now; 
+            quotation.Date = DateTime.Now;
+            ModelState["CategoryID"].Errors.Clear(); 
 
             if (ModelState.IsValid)
-            {   
+            {
+                var user = manager.FindById(User.Identity.GetUserId());
+                quotation.User = user; 
+
                 db.Quotations.Add(quotation);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "Name", quotation.CategoryID);
             return View(quotation);
         }
 
@@ -185,5 +202,7 @@ namespace QuotationAppv1.Controllers
             }
             base.Dispose(disposing);
         }
+
+      
     }
 }

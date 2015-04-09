@@ -186,6 +186,10 @@
     <Compile Include="Migrations\201503061543488_ChangeProp1.Designer.cs">
       <DependentUpon>201503061543488_ChangeProp1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201504062318043_Changed.cs" />
+    <Compile Include="Migrations\201504062318043_Changed.Designer.cs">
+      <DependentUpon>201504062318043_Changed.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Category.cs" />
@@ -207,6 +211,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Grid.mvc.readme" />
     <None Include="Properties\PublishProfiles\QuotationProject.pubxml" />
+    <None Include="Properties\PublishProfiles\QuotesVersion2 %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\QuotesVersion2.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\gridmvc.js" />
@@ -282,6 +287,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201503061543488_ChangeProp1.resx">
       <DependentUpon>201503061543488_ChangeProp1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201504062318043_Changed.resx">
+      <DependentUpon>201504062318043_Changed.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -18,6 +18,7 @@ namespace QuotationAppv1.Models
         public virtual Category Category { get; set; }
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy hh:mm tt}")]
         public DateTime Date { get; set; }
+        public virtual ApplicationUser User { get; set; }
      
     }
 }
