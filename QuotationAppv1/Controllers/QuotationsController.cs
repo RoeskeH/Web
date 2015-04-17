@@ -9,6 +9,8 @@ using System.Web.Mvc;
 using QuotationAppv1.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace QuotationAppv1.Controllers
 {
@@ -27,35 +29,59 @@ namespace QuotationAppv1.Controllers
             
         
         // GET: Quotations
-        public ActionResult Index(string searchString)
+        public ActionResult Index(string searchString, string LogQuotes)
         {
+            var baseUri = new Uri("http://localhost:4852");
+            HttpClient client = new HttpClient();
+            client.BaseAddress = baseUri;
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            HttpResponseMessage response = client.GetAsync("GetDayQuote").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                Quotation data = response.Content.ReadAsAsync<Quotation>().Result;
+                string dayQuote = data.Quote +" by "+ data.Author; 
+                ViewBag.DayQuote = dayQuote; 
+            }
                
                var quotations = from a in db.Quotations select a;
+               var userQuotes = User.Identity.GetUserId(); 
 
-               if (!String.IsNullOrEmpty(searchString))
+
+             if (!String.IsNullOrEmpty(searchString))
                {
-                   quotations = quotations.Where(a => a.Category.Name.Contains(searchString) || a.Author.Contains(searchString) || a.Quote.Contains(searchString));
+                   quotations = Search(searchString, quotations);
                    ViewBag.ShowLink = true;
                   
+
                }
-               else
+               else if(LogQuotes == "Show My Quotes") 
+               {
+
                    ViewBag.ShowLink = false;
+                   quotations = UserQuotes(userQuotes, quotations);
+                   ViewBag.ShowQuotes = true; 
 
-               
-               
-           return View(quotations.ToList());
-           //var userquotes = from b in db.Quotations select b;
-           //var person = User.Identity.GetUserId();
-           //if (!String.IsNullOrEmpty(person))
-           //{
-           //    userquotes = userquotes.Where(b => b.User.Id.Contains(person));
-           //    ViewBag.show = true;
-           //}
-           //else
-           //    ViewBag.show = false;
+               }
+             else
+             {
+                 ViewBag.ShowLink = false;
+                 ViewBag.ShowQuotes = false; 
+                 
+             }
+            
+        return View(quotations.ToList()); 
+          
+        }
 
-           //return View(userquotes.ToList());
-                   
+        private static IQueryable<Quotation> UserQuotes(string userQuotes, IQueryable<Quotation> quotations)
+        {
+            return quotations.Where(a => a.User.Id.Contains(userQuotes));
+        }
+
+        private static IQueryable<Quotation> Search(string searchString, IQueryable<Quotation> quotations)
+        {
+            return quotations.Where(a => a.Category.Name.Contains(searchString) || a.Author.Contains(searchString) || a.Quote.Contains(searchString));
         }
 
        
@@ -99,27 +125,24 @@ namespace QuotationAppv1.Controllers
                 catCheck = catCheck.Where(a => a.Name.Equals(add));
 
 
-                if (catCheck.Equals(true))
+                if (catCheck.Count() == 0)
                 {
                     Category c = new Category { Name = add };
                     db.Categories.Add(c);
                     db.SaveChanges();
+                    quotation.Category = c; 
+                   
                 }
             }
 
-           //if(!String.IsNullOrEmpty(add))
-           //{
-           //     Category c = new Category { Name = add };
-           //     db.Categories.Add(c);
-           //     db.SaveChanges();
-                
-           //}
+          
 
             quotation.Date = DateTime.Now;
             ModelState["CategoryID"].Errors.Clear(); 
 
             if (ModelState.IsValid)
             {
+               
                 var user = manager.FindById(User.Identity.GetUserId());
                 quotation.User = user; 
 

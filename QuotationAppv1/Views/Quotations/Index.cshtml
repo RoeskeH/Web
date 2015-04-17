@@ -13,20 +13,28 @@
 
         @using (Html.BeginForm())
         {
+      
+                <p> Quote of the Day: @ViewBag.DayQuote </p> 
+           
             if (!User.Identity.IsAuthenticated)
             {
                 <h3>Register or Login to Add Quotes</h3>
             }
             if (User.Identity.IsAuthenticated)
             {   @Html.ActionLink("Create New", "Create", "QuotationsController", new { @class = "btn btn-success" })
+                <input type="submit" value="Show My Quotes" name="LogQuotes" />
+
+                if (ViewBag.ShowQuotes == true)
+                {
+                    @Html.ActionLink("Display All", "Index", "QuotationsController", new { @class = "btn btn-primary" })
+                }
 
             }
-            if (User.Identity.IsAuthenticated)
+            @*if (User.Identity.IsAuthenticated)
             {
-                
                  @Html.ActionLink("Show My Quotes", "Index", "QuotationsController", new { @class = "btn btn-primary" })
-            }
-
+            }*@
+    
         <input type="submit" value="Search" />
         @Html.TextBox("SearchString") <br />
         if (ViewBag.ShowLink == true)
